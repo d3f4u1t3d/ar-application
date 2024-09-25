@@ -13,16 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        window = UIWindow(frame: UIScreen.main.bounds)
-                
-                // Create the HomeScreenViewController and set it as the root
-                let homeViewController = HomeScreenViewController()
-                window?.rootViewController = homeViewController
-                
-                // Make the window visible
-                window?.makeKeyAndVisible()
-
-                return true
+        return true
     }
 
     // MARK: UISceneSession Lifecycle

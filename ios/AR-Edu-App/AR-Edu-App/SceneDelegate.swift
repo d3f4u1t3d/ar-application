@@ -13,17 +13,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+                
         guard let windowScene = (scene as? UIWindowScene) else { return }
-                
-                // Create a new UIWindow using the windowScene
-                window = UIWindow(windowScene: windowScene)
-                
-                // Set the HomeScreenViewController as the root view controller
-                let homeViewController = HomeScreenViewController()
-                window?.rootViewController = homeViewController
-                
-                // Make the window visible
-                window?.makeKeyAndVisible()
+        
+        let initialVC = HomeScreenViewController()
+        let navigationController = UINavigationController(rootViewController: initialVC)
+        
+        let window = UIWindow(windowScene: windowScene)
+        window.rootViewController = navigationController
+        self.window = window
+        window.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
