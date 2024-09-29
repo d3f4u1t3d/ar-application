@@ -1,5 +1,6 @@
 package com.example.arapplicationservice.Endpoints;
 
+import com.example.arapplicationservice.Service.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,27 +20,17 @@ import java.nio.file.Paths;
 
 @RestController
 public class FilesEndpoint {
+
     @Autowired
-    private DataSource dataSource;
+    private FilesService filesService;
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Resource> saveFile(@PathVariable String id){
+
+        return null;
+    }
     @GetMapping("/files/{filename}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        try{
-        Resource resource = new ClassPathResource(filename);
-        if (!resource.exists()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(resource);
-
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        return filesService.downloadFileService(filename);
     }
-    }
-
-
 }
