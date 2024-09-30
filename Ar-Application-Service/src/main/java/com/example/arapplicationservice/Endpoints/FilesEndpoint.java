@@ -4,10 +4,10 @@ import com.example.arapplicationservice.Service.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 public class FilesEndpoint {
@@ -15,10 +15,10 @@ public class FilesEndpoint {
     @Autowired
     private FilesService filesService;
 
-    @PostMapping("/{id}")
-    public ResponseEntity<Resource> saveFile(@PathVariable String id){
-
-        return null;
+    @PostMapping("/upload")
+    public String saveFile(@RequestParam("jsonData") String jsonData, @RequestParam("file") MultipartFile file) throws IOException {
+        filesService.uploadFileService(jsonData,file);
+        return "uploaded";
     }
     @GetMapping("/files/{filename}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
