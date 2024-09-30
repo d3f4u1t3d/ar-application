@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './fileUpload.scss'
 import { MdOutlineFileUpload } from "react-icons/md";
 import { FaImage } from "react-icons/fa";

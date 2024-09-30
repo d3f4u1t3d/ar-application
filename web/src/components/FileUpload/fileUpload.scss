@@ -12,6 +12,10 @@ input[type="file"]{
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    padding: 0 2px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
     .upload_icon_pending{
         font-size: 64px;
     }
