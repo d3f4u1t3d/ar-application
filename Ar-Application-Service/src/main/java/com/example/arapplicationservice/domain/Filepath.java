@@ -15,7 +15,7 @@ public class Filepath {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name="fk_room_id",referencedColumnName = "id")
+    @JoinColumn(name="reference_room_key",referencedColumnName = "id")
     private Room roomData;
 
     @Column(name = "marker_file_path")
