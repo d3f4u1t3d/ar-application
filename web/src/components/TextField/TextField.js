@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import './textField.scss'
 
 const TextField = ({placeholder , val , label,onChangeHandler,name}) => {

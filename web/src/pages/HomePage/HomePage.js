@@ -4,6 +4,7 @@ import FileUpload from '../../components/FileUpload/FileUpload'
 import Button from '../../components/Button/Button'
 import './homePage.scss'
 import Line from '../../components/Line/Line'
+import INPUT_CONSTANTS from '../../components/Constants/Input.constants'
 
 const HomePage = () => {
   const [formData , setFormData] = useState({
@@ -42,7 +43,6 @@ const HomePage = () => {
   //Change file Value
   const changeFileValue = (e,index,name) => {
     let newValue = e.target.files[0];
-    console.log(name);
    setFormData(prev => {
     let position = prev.imageSet.length - index;
     prev.imageSet[position][name]=newValue;
@@ -67,10 +67,17 @@ const HomePage = () => {
     <>
     {/* Author Section */}
       <div className='author_id_section'>
-        <TextField label={"Author Id"} placeholder={'Please choose an unique Author ID'} val= {formData.authorId} onChangeHandler = {changeAuthorId} name={"authorId"}/>
+        <TextField 
+          label={INPUT_CONSTANTS.authorID.label} 
+          placeholder={INPUT_CONSTANTS.authorID.placeholder} 
+          val= {formData.authorId} 
+          onChangeHandler = {changeAuthorId} 
+          name={INPUT_CONSTANTS.authorID.name}/>
         <div className='right_section'>
         <div className='copy_btn_container'>
-          <Button buttonText={'copy code'} purpose={'copy'}/>
+          <Button 
+            buttonText={'copy code'} 
+            purpose={'copy'}/>
         </div>
         </div>
       </div>
@@ -83,7 +90,10 @@ const HomePage = () => {
           </h1>
           <div className='right_section'>
             <div className='copy_btn_container'>
-              <Button buttonText={'Add Section'} purpose={'add'} onClickHandler={addImageSet}/>
+              <Button 
+                buttonText={'Add Section'} 
+                purpose={'add'} 
+                onClickHandler={addImageSet}/>
             </div>
           </div>
         </div>
@@ -93,17 +103,32 @@ const HomePage = () => {
       {
         formData.imageSet.map((el) => {
           return <>
-                <div className='single_set' key={el.id}>
-                  <FileUpload placeholder={"Marker Image"} name="markerImg" val={el.markerImg} index = {el.id}  onChangeHandler={changeFileValue}/>
-                  <div className='file_seperator'>
-                  <Line/>
+                  <div className='single_set' key={el.id}>
+                    <FileUpload 
+                      placeholder={INPUT_CONSTANTS.markerImg.placeholder} 
+                      name={INPUT_CONSTANTS.markerImg.name} 
+                      val={el.markerImg} 
+                      index = {el.id}  
+                      onChangeHandler={changeFileValue}
+                      fileType={INPUT_CONSTANTS.markerImg.type}/>
+                    <div className='file_seperator'>
+                    <Line/>
+                    </div>
+                    <FileUpload 
+                      placeholder={INPUT_CONSTANTS.modelImg.placeholder} 
+                      name = {INPUT_CONSTANTS.modelImg.name}
+                      val={el.modelImg}  
+                      index = {el.id} 
+                      onChangeHandler={changeFileValue}
+                      fileType={INPUT_CONSTANTS.modelImg.type}/>
+                    <div className='delete_button_container'>
+                    <Button 
+                      buttonText={"Delete"} 
+                      purpose={"dalete"} 
+                      onClickHandler={() => deleteSet(el.id)}/>
+                    </div>
                   </div>
-                  <FileUpload placeholder={"3D Image"} name = "modelImg" val={el.modelImg}  index = {el.id} onChangeHandler={changeFileValue}/>
-                  <div className='delete_button_container'>
-                  <Button buttonText={"Delete"} purpose={"dalete"} onClickHandler={() => deleteSet(el.id)}/>
-                  </div>
-                </div>
-          </>
+                </>
         })
       }
       </div>
@@ -116,8 +141,8 @@ const HomePage = () => {
             </div>
         </div>
       </div>
-    </>
+  </>
   )
-}
+}  
 
 export default HomePage
