@@ -13,6 +13,7 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "room_id")
+
+    @Column(name = "room_key")
     private String roomUniqueId;
 }
