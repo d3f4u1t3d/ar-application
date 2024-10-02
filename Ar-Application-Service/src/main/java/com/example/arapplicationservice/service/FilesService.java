@@ -2,6 +2,7 @@ package com.example.arapplicationservice.service;
 
 import com.example.arapplicationservice.domain.Filepath;
 import com.example.arapplicationservice.dto.request.UploadFileNameRequest;
+import com.example.arapplicationservice.dto.response.JsonResponse;
 import com.example.arapplicationservice.exceptions.DuplicateFileExtension;
 import com.example.arapplicationservice.repository.FilepathRepository;
 import com.example.arapplicationservice.repository.RoomRepository;
@@ -24,6 +25,8 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -92,6 +95,7 @@ public class FilesService {
             for (MultipartFile file : files) {
                 String filename = file.getOriginalFilename();
                 Path fileDirPath;
+                assert filename != null;
                 if (filename.endsWith(".zip") || filename.endsWith(".usdz")) {
                     fileDirPath = Paths.get(fileUploadMarkerDir).resolve(filename);
                 } else {
@@ -109,5 +113,16 @@ public class FilesService {
         catch (IOException e) {
             throw new RuntimeException("Failed to upload file: " + e.getMessage(), e);
         }
+    }
+
+    public JsonResponse getFileNames(String roomId) {
+        List<Filepath> fileNames = filepathRepository.findAllByRoomId(roomId);
+        JsonResponse jsonResponse = new JsonResponse();
+        Map<String,String> map = new HashMap<>();
+        for(Filepath filename:fileNames){
+            map.put(filename.getMarkerFilePath(),filename.getModelFilePath());
+        }
+        jsonResponse.setFileNames(map);
+        return jsonResponse;
     }
 }
