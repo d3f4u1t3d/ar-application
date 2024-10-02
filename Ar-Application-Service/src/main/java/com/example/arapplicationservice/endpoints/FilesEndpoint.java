@@ -1,6 +1,6 @@
-package com.example.arapplicationservice.Endpoints;
+package com.example.arapplicationservice.endpoints;
 
-import com.example.arapplicationservice.Service.FilesService;
+import com.example.arapplicationservice.service.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,8 @@ public class FilesEndpoint {
     private FilesService filesService;
 
     @PostMapping("/upload")
-    public String saveFile(@RequestParam("jsonData") String jsonData, @RequestParam("file") MultipartFile file) throws IOException {
-        filesService.uploadFileService(jsonData,file);
+    public String saveFile(@RequestParam("jsonData") String jsonData, @RequestParam("file") MultipartFile[] files) throws IOException {
+        filesService.uploadFileService(jsonData,files);
         return "uploaded";
     }
     @GetMapping("/files/{filename}")

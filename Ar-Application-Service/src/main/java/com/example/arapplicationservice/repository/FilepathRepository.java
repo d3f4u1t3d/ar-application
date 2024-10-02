@@ -1,4 +1,4 @@
-package com.example.arapplicationservice.Repository;
+package com.example.arapplicationservice.repository;
 
 import com.example.arapplicationservice.domain.Filepath;
 import org.springframework.data.jpa.repository.JpaRepository;

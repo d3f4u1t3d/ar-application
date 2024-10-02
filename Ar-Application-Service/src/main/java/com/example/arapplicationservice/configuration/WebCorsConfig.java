@@ -1,4 +1,4 @@
-package com.example.arapplicationservice.Configuration;
+package com.example.arapplicationservice.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
