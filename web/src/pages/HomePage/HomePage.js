@@ -5,6 +5,8 @@ import Button from '../../components/Button/Button'
 import './homePage.scss'
 import Line from '../../components/Line/Line'
 import INPUT_CONSTANTS from '../../components/Constants/Input.constants'
+import { validateData } from '../../service/ValidationService'
+import { postData } from '../../service/ApiService'
 
 const HomePage = () => {
   const [formData , setFormData] = useState({
@@ -14,8 +16,7 @@ const HomePage = () => {
 
   //add Image Set Section
   const addImageSet = () => {  
-    console.log("add");
-      
+  
     setFormData (prev => {
       let temp = {
         id:prev.imageSet.length +1,
@@ -59,8 +60,11 @@ const HomePage = () => {
     })
   }
   const createRoom =() => {
-    console.log(formData);
+   if(validateData(formData)){
+    let response = postData(formData);
+    console.log(response);
     
+   }
   }
 
   return (
