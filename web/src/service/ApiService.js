@@ -4,6 +4,8 @@ import { alignFileName } from "../utils/FileNameUtils";
 
 export const postData = async ({ authorId, imageSet }) => {
   let modifiedImages = alignFileName(imageSet);
+  console.log(modifiedImages);
+  
   let payloadData = constructPayload(authorId, modifiedImages);
   console.log([...payloadData.entries()]);
 

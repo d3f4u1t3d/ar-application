@@ -1,8 +1,8 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './popModal.scss'
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
-const PopModal =memo(({show , message , closeModal}) => {
+const PopModal =({show , message , closeModal}) => {
 
     const [showElement , setShowElemet] = useState(show);
     useEffect(()=>{
@@ -23,6 +23,6 @@ const PopModal =memo(({show , message , closeModal}) => {
         </div>
     </div>
   )
-} ,(prevProps , nextProps) => prevProps.show === nextProps.show)
+} 
 
 export default PopModal

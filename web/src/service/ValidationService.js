@@ -7,18 +7,18 @@ export const validateData = ({authorId , imageSet}) => {
     }
     if(authorId === ""){
         validate.valid = false;
-        validate.msg  = "Enter a valid Anchor Id";
+        validate.msg  = "Please Enter a valid Anchor Id";
     }
     else{
         if(!imageSet.length >0 ){
             validate.valid = false;
-            validate.msg  = "Add atleast single set of data";
+            validate.msg  = "Please Add atleast single set of data";
         }
         else{
             let allImages = imageSet.map(obj => Object.values(obj)).flat();
             if(allImages.includes(null)){
                 validate.valid = false;
-            validate.msg  = "Upload data for all the fields.";
+            validate.msg  = "Please Upload data for all the fields.";
             }
         }
     }
