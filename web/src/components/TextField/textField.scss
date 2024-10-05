@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    width: 50%;
+    width: 100%;
     .label{
         font-size: 24px;
     }
@@ -19,7 +19,6 @@
 
 @media screen and (max-width:768px) {
     .fieldSet{
-        width: 70%;
         .label{
             font-size: 20px;
         }
@@ -31,7 +30,6 @@
 }
 @media screen and (max-width:480px) {
     .fieldSet{
-        width: 70%;
         .label{
             font-size: 16px;
         }
