@@ -1,7 +1,7 @@
-import React, { memo } from 'react'
+import React from 'react'
 import './textField.scss'
 
-const TextField = memo(({placeholder , val , label,onChangeHandler,name}) => {
+const TextField = ({placeholder , val , label,onChangeHandler,name}) => {
   
   return (
     <>
@@ -13,6 +13,6 @@ const TextField = memo(({placeholder , val , label,onChangeHandler,name}) => {
     </div>
     </>
   )
-} , (prevProps , nextProps) => prevProps.val === nextProps.val) 
+}
 
 export default TextField

@@ -1,25 +1,14 @@
 export const alignFileName = (images) => {
-    let fileNames = {};
     const modified = images.map( ({markerImg , modelImg}) => {
         let markerExt = markerImg.name.split('.').pop()
-        let modelExt = modelImg.name.split('.').pop()
+        let modelImgName = modelImg.name;
+        let refernceName = modelImgName.substring(0 , modelImgName.lastIndexOf("."));
 
-        let uniqueId = `file_${Date.now()}`;
-
-
-        markerImg =  renameFile(markerImg ,`${uniqueId}.${markerExt}` )
-        modelImg =  renameFile(modelImg ,`${uniqueId}.${modelExt}` )
-
-        //set fileName in names
-
-        fileNames = {...fileNames , 
-            [`${uniqueId}.${markerExt}`] : `${uniqueId}.${modelExt}`
-        }
-
+        markerImg =  renameFile(markerImg ,`${refernceName}.${markerExt}` )
+        
         return {markerImg , modelImg}
     })
     return modified;
-    
 }
 
 

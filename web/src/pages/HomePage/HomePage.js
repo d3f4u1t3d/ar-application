@@ -15,12 +15,10 @@ const HomePage = () => {
     imageSet: [],
   });
 
-  const [modal , setmodal]= useState({
-    show:false,
-    message:""
-  })
-
-
+  const [modal, setmodal] = useState({
+    show: false,
+    message: "",
+  });
 
   //add Image Set Section
   const addImageSet = () => {
@@ -75,7 +73,7 @@ const HomePage = () => {
       if (status === 200) {
         setmodal({
           show: true,
-          message:"Data Submitted"
+          message: "Data Submitted",
         });
         setFormData((prev) => {
           return {
@@ -87,7 +85,7 @@ const HomePage = () => {
     } else {
       setmodal({
         show: true,
-        message:validData.msg
+        message: validData.msg,
       });
     }
   };
@@ -95,31 +93,42 @@ const HomePage = () => {
   const resetModal = () => {
     setmodal({
       show: false,
-      message:""    
+      message: "",
     });
-  }
+  };
 
-  const copyToClipboard = () => {
+  const copyToClipboard = (authorID) => {
     //CODE FOR COPY
-  }
-  
+    console.log(authorID);
+    const blob = new Blob([authorID.toString()], {
+      type: "text/plain",
+    });
+    const clipboardItem = new ClipboardItem({ "text/plain": blob });
+    navigator.clipboard.write([clipboardItem]);
+    console.log("copied");
+  };
+
   return (
     <>
-    <PopModal {...modal} closeModal = {resetModal} />
+      <PopModal {...modal} closeModal={resetModal} />
       {/* Author Section */}
       <div className="author_id_section">
         <div className="left_section">
-        <TextField
-          label={INPUT_CONSTANTS.authorID.label}
-          placeholder={INPUT_CONSTANTS.authorID.placeholder}
-          val={formData.authorId}
-          onChangeHandler={changeAuthorId}
-          name={INPUT_CONSTANTS.authorID.name}
-        />
+          <TextField
+            label={INPUT_CONSTANTS.authorID.label}
+            placeholder={INPUT_CONSTANTS.authorID.placeholder}
+            val={formData.authorId}
+            onChangeHandler={changeAuthorId}
+            name={INPUT_CONSTANTS.authorID.name}
+          />
         </div>
         <div className="right_section">
           <div className="copy_btn_container">
-           <Button buttonText={"copy ID"} purpose={"copy"} onClickHandler = {copyToClipboard} />
+            <Button
+              buttonText={"copy ID"}
+              purpose={"copy"}
+              onClickHandler={() => copyToClipboard(formData.authorId)}
+            />
           </div>
         </div>
       </div>
