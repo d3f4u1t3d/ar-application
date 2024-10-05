@@ -14,6 +14,8 @@ class HomeScreenViewController: UIViewController {
     let appTitleLabel = UILabel()
     let tenantRoomIdTextField = UITextField()
     let submitButton = UIButton(type: .system)
+    var appTitleContainerView = UIView()
+    var appSubTitle = UILabel()
     
     private var referenceImages : [ARReferenceImage] = []
     private var downloded3DModels : [SCNNode] = []
@@ -24,27 +26,70 @@ class HomeScreenViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setBackgroundImage()
+
         // Set up the view background color
         view.backgroundColor = UIColor.systemTeal
 
         // Configure App Title Label
-        appTitleLabel.text = "Pullaiyar Suli-Edu-App"
-        appTitleLabel.font = UIFont.boldSystemFont(ofSize: 34)
-        appTitleLabel.textAlignment = .center
+        appTitleLabel.text = "LearnSphere"
+        appTitleLabel.font = UIFont.boldSystemFont(ofSize: 50)
+        appTitleLabel.backgroundColor = .black
+        appTitleLabel.textAlignment = .left
+        appTitleLabel.layer.cornerRadius = 10
+        appTitleLabel.layer.masksToBounds = true
         appTitleLabel.textColor = UIColor.label
         appTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        appTitleContainerView.addSubview(appTitleLabel)
+
+        appSubTitle.text = "The quick brown fox jumps over the lazy dog"
+        appSubTitle.numberOfLines = 3
+        appSubTitle.font = UIFont.boldSystemFont(ofSize: 20)
+        appSubTitle.backgroundColor = .clear
+        appSubTitle.translatesAutoresizingMaskIntoConstraints = false
+        appTitleContainerView.addSubview(appSubTitle)
+        
+        appTitleContainerView.backgroundColor = .clear
+        view.addSubview(appTitleContainerView)
+        appTitleContainerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            appTitleContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            appTitleContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -70),
+            appTitleContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor,constant: 20),
+            appTitleContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            appTitleContainerView.heightAnchor.constraint(equalToConstant: 180)
+        ])
+        
+        appTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            appTitleLabel.topAnchor.constraint(equalTo: appTitleContainerView.topAnchor),
+            appTitleLabel.leadingAnchor.constraint(equalTo: appTitleContainerView.leadingAnchor),
+            appTitleLabel.trailingAnchor.constraint(equalTo: appTitleContainerView.trailingAnchor, constant: -30),
+            appTitleLabel.heightAnchor.constraint(equalToConstant: 70)
+        ])
+        
+        NSLayoutConstraint.activate([
+            appSubTitle.topAnchor.constraint(equalTo: appTitleLabel.bottomAnchor, constant: -15),
+            appSubTitle.leadingAnchor.constraint(equalTo: appTitleContainerView.leadingAnchor),
+            appSubTitle.trailingAnchor.constraint(equalTo: appTitleContainerView.trailingAnchor, constant: -140),
+            appSubTitle.bottomAnchor.constraint(equalTo: appTitleContainerView.bottomAnchor)
+        ])
         
         // Configure Tenant Room ID TextField
-        tenantRoomIdTextField.placeholder = "Enter Room ID"
+        tenantRoomIdTextField.placeholder = "Room ID here"
         tenantRoomIdTextField.borderStyle = .roundedRect
+        tenantRoomIdTextField.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        tenantRoomIdTextField.borderRect(forBounds: .zero)
+        tenantRoomIdTextField.layer.cornerRadius = 10
+        tenantRoomIdTextField.layer.borderColor = UIColor.white.cgColor  // Set white border color
+        tenantRoomIdTextField.layer.borderWidth = 1.0
         tenantRoomIdTextField.font = UIFont.systemFont(ofSize: 18)
         tenantRoomIdTextField.keyboardType = .numberPad
         tenantRoomIdTextField.translatesAutoresizingMaskIntoConstraints = false
         
         // Configure Submit Button
-        submitButton.setTitle("Submit", for: .normal)
-        submitButton.backgroundColor = UIColor.systemIndigo
+        submitButton.setTitle("Enter", for: .normal)
+        submitButton.backgroundColor = UIColor(red: 245/255, green: 189/255, blue: 69/255, alpha: 1.0)
         submitButton.setTitleColor(UIColor.white, for: .normal)
         submitButton.layer.cornerRadius = 10
         submitButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
@@ -52,7 +97,7 @@ class HomeScreenViewController: UIViewController {
         submitButton.translatesAutoresizingMaskIntoConstraints = false
         
         // Set up layout using a vertical stack view
-        let stackView = UIStackView(arrangedSubviews: [appTitleLabel, tenantRoomIdTextField, submitButton])
+        let stackView = UIStackView(arrangedSubviews: [appTitleContainerView, tenantRoomIdTextField, submitButton])
         stackView.axis = .vertical
         stackView.spacing = 20
         stackView.alignment = .fill
@@ -64,15 +109,34 @@ class HomeScreenViewController: UIViewController {
             // Stack View constraints
             stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
             // TextField height constraint
-            tenantRoomIdTextField.heightAnchor.constraint(equalToConstant: 50),
+            tenantRoomIdTextField.heightAnchor.constraint(equalToConstant: 60),
             
             // Button height constraint
             submitButton.heightAnchor.constraint(equalToConstant: 50)
         ])
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        AppUtility.lockOrientation(.portrait)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        AppUtility.lockOrientation(.all)
+
+    }
+    func setBackgroundImage() {
+        let backgroundImageView = UIImageView(frame: self.view.bounds)
+        backgroundImageView.image = UIImage(named: "HomeWallpaper")
+        backgroundImageView.contentMode = .scaleAspectFill
+
+        self.view.addSubview(backgroundImageView)
+        self.view.sendSubviewToBack(backgroundImageView)
     }
     
     // Button Action
