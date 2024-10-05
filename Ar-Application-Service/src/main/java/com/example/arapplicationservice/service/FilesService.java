@@ -114,6 +114,7 @@ public class FilesService {
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to upload file: " + e.getMessage(), e);
+
         }
     }
 
