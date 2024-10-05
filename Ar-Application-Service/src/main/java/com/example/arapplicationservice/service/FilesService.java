@@ -2,6 +2,7 @@ package com.example.arapplicationservice.service;
 
 import com.example.arapplicationservice.domain.Filepath;
 import com.example.arapplicationservice.dto.request.UploadFileNameRequest;
+import com.example.arapplicationservice.dto.response.IOSResponse;
 import com.example.arapplicationservice.dto.response.JsonResponse;
 import com.example.arapplicationservice.exceptions.DuplicateFileExtension;
 import com.example.arapplicationservice.repository.FilepathRepository;
@@ -25,6 +26,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,9 +49,9 @@ public class FilesService {
         try{
             Path fileDirPath ;
             if (filename.endsWith(".zip") || filename.endsWith(".usdz") ) {
-                fileDirPath = Paths.get(fileUploadMarkerDir).resolve(filename);
-            } else {
                 fileDirPath = Paths.get(fileUploadModelDir).resolve(filename);
+            } else {
+                fileDirPath = Paths.get(fileUploadMarkerDir).resolve(filename);
             }
                 Resource resource = new UrlResource(fileDirPath.toUri());
                 if (!resource.exists()) {
@@ -97,9 +99,9 @@ public class FilesService {
                 Path fileDirPath;
                 assert filename != null;
                 if (filename.endsWith(".zip") || filename.endsWith(".usdz")) {
-                    fileDirPath = Paths.get(fileUploadMarkerDir).resolve(filename);
-                } else {
                     fileDirPath = Paths.get(fileUploadModelDir).resolve(filename);
+                } else {
+                    fileDirPath = Paths.get(fileUploadMarkerDir).resolve(filename);
                 }
                 if (Files.exists(fileDirPath)) {
                     throw new FileAlreadyExistsException("File " + filename + " already exists.");
@@ -124,5 +126,19 @@ public class FilesService {
         }
         jsonResponse.setFileNames(map);
         return jsonResponse;
+    }
+
+    public IOSResponse getFileNamesIOS(String roomId) {
+        List<Filepath> fileNames = filepathRepository.findAllByRoomId(roomId);
+        IOSResponse iosResponse = new IOSResponse();
+        List<String> listmarker = new ArrayList<>();
+        List<String> listmodel = new ArrayList<>();
+        for(Filepath filename:fileNames){
+            listmarker.add(filename.getMarkerFilePath());
+            listmodel.add(filename.getModelFilePath());
+        }
+        iosResponse.setMarkers(listmarker);
+        iosResponse.setModels(listmodel);
+        return iosResponse;
     }
 }
