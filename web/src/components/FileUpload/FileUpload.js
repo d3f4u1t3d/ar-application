@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { memo } from 'react'
 import './fileUpload.scss'
 import { MdOutlineFileUpload } from "react-icons/md";
 import { FaImage } from "react-icons/fa";
 
-const FileUpload = ({placeholder,val,onChangeHandler ,index , name,fileType}) => {
+const FileUpload = memo(({placeholder,val,onChangeHandler ,index , name,fileType}) => {
   return (
     <>
     <label className='file_upload_label' htmlFor={`file_upload${name}_${index}`}>
@@ -27,6 +27,6 @@ const FileUpload = ({placeholder,val,onChangeHandler ,index , name,fileType}) =>
     <input type='file' id={`file_upload${name}_${index}`}  className='file_upload' onChange={(e)=>onChangeHandler(e,index,name)} accept={fileType} />
     </>
   )
-}
+} ,  (prevProps , nextProps) => prevProps.val === nextProps.val) 
 
 export default FileUpload
