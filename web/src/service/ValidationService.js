@@ -1,4 +1,5 @@
 import { all } from "axios";
+import { MODAL_CONSTANTS } from "../Constants/CommonConstants";
 
 export const validateData = ({authorId , imageSet}) => {
     let validate = {
@@ -7,21 +8,20 @@ export const validateData = ({authorId , imageSet}) => {
     }
     if(authorId === ""){
         validate.valid = false;
-        validate.msg  = "Please Enter a valid Anchor Id";
+        validate.msg  = MODAL_CONSTANTS.ModalMessages.errorAuthorId;
     }
     else{
         if(!imageSet.length >0 ){
             validate.valid = false;
-            validate.msg  = "Please Add atleast single set of data";
+            validate.msg  = MODAL_CONSTANTS.ModalMessages.errorImageCount;
         }
         else{
             let allImages = imageSet.map(obj => Object.values(obj)).flat();
             if(allImages.includes(null)){
                 validate.valid = false;
-            validate.msg  = "Please Upload data for all the fields.";
+                validate.msg  = MODAL_CONSTANTS.ModalMessages.errorImageNull;
             }
         }
     }
     return validate;
 }
-

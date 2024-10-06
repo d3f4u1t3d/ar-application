@@ -4,12 +4,15 @@ import FileUpload from "../../components/FileUpload/FileUpload";
 import Button from "../../components/Button/Button";
 import "./homePage.scss";
 import Line from "../../components/Line/Line";
-import INPUT_CONSTANTS from "../../components/Constants/Input.constants";
+import INPUT_CONSTANTS from "../../Constants/Input.constants";
 import { validateData } from "../../service/ValidationService";
 import { postData } from "../../service/ApiService";
 import PopModal from "../../components/PopModal/PopModal";
+import { MODAL_CONSTANTS } from "../../Constants/CommonConstants";
 
 const HomePage = () => {
+
+  //State Management
   const [formData, setFormData] = useState({
     authorId: "",
     imageSet: [],
@@ -18,6 +21,7 @@ const HomePage = () => {
   const [modal, setmodal] = useState({
     show: false,
     message: "",
+    msgType:""
   });
 
   //add Image Set Section
@@ -56,6 +60,7 @@ const HomePage = () => {
     });
   };
 
+  //Delete a Image Set
   const deleteSet = (index) => {
     setFormData((prev) => {
       let position = prev.imageSet.length - index;
@@ -64,16 +69,18 @@ const HomePage = () => {
     });
   };
 
+  //Create Room with user provided Data
   const createRoom = async () => {
     let validData = validateData(formData);
 
     if (validData.valid) {
       let response = await postData(formData);
       let status = response.status;
-      if (status === 200) {
+      if (status === 200) {//Successfull Upload.
         setmodal({
           show: true,
-          message: "Data Submitted",
+          message: MODAL_CONSTANTS.ModalMessages.dataUploadSuccess,
+          msgType:MODAL_CONSTANTS.success
         });
         setFormData((prev) => {
           return {
@@ -81,25 +88,35 @@ const HomePage = () => {
             imageSet: [],
           };
         });
+      }else{//UnsuccessFull
+        setmodal({
+          show: true,
+          message: MODAL_CONSTANTS.ModalMessages.wentWrong,
+          msgType:MODAL_CONSTANTS.error
+        });
       }
     } else {
       setmodal({
         show: true,
         message: validData.msg,
+        msgType:MODAL_CONSTANTS.error
       });
     }
   };
 
+  //Reset the Pop up modal
   const resetModal = () => {
     setmodal({
       show: false,
       message: "",
+      msgType:""
     });
   };
 
+
+  // Copy To Clip Board
   const copyToClipboard = (authorID) => {
     //CODE FOR COPY
-    console.log(authorID);
     const blob = new Blob([authorID.toString()], {
       type: "text/plain",
     });

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './popModal.scss'
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
-const PopModal =({show , message , closeModal}) => {
+const PopModal =({show , message , closeModal , msgType}) => {
 
     const [showElement , setShowElemet] = useState(show);
     useEffect(()=>{
@@ -11,8 +11,8 @@ const PopModal =({show , message , closeModal}) => {
     
   return (
     <div className={`popup_container ${showElement ? "" : "hide"}`}>
-        <div className='bg'></div>
-        <div className='modal'>
+        <div className='bg' onClick={closeModal}></div>
+        <div className={`modal ${msgType}`}>
             <button className='close-modal'
             onClick={closeModal}>
             <IoIosCloseCircleOutline   size={30}/>

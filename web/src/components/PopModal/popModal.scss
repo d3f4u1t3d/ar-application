@@ -22,13 +22,21 @@
         height: 200px;
         min-width: 500px;
         max-width: 40%;
-        background-color: #e5e4eb;
+        background-color: #DEDCFF;
         z-index: 11;
         position: relative;
         border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
+        &.error{
+            background-color: #C1121F;
+            color: #fff;
+        }
+        &.success{
+            background-color: green;
+            color: #fff;
+        }
         .close-modal{
             position: absolute;
             top: 10px;
@@ -36,10 +44,11 @@
             border: 0;
             cursor: pointer;
             background-color: transparent;
+            color: #fff;
         }
         .modal_msg{
-            font-size: 18px;
-            font-weight: 500;
+            font-size: 22px;
+            font-weight: 500;  
         }
     }
 }
