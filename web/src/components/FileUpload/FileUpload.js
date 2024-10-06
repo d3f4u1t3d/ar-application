@@ -3,7 +3,7 @@ import './fileUpload.scss'
 import { MdOutlineFileUpload } from "react-icons/md";
 import { FaImage } from "react-icons/fa";
 
-const FileUpload = ({placeholder,val,onChangeHandler ,index , name,fileType}) => {
+const FileUpload =({placeholder,val,onChangeHandler ,index , name,fileType}) => {
   return (
     <>
     <label className='file_upload_label' htmlFor={`file_upload${name}_${index}`}>

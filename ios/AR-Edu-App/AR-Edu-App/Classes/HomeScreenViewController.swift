@@ -15,6 +15,13 @@ class HomeScreenViewController: UIViewController {
     let tenantRoomIdTextField = UITextField()
     let submitButton = UIButton(type: .system)
     
+    private var referenceImages : [ARReferenceImage] = []
+    private var downloded3DModels : [SCNNode] = []
+    
+    private var downloadModelsAPI = "https://0a22-49-204-112-102.ngrok-free.app/files/"
+    private var getFilesAPI = "https://0a22-49-204-112-102.ngrok-free.app/ios/45"
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -75,15 +82,407 @@ class HomeScreenViewController: UIViewController {
             return
         }
         
-        guard let referenceImages = ARReferenceImage.referenceImages(inGroupNamed: "DetectionImages", bundle: nil) else {
-            print("No reference images found")
+        let roomFolderURL = createFolderInDocumentsDirectory(folderName: String(tenantId))
+        let roomID = "1234"
+        
+        downloadAssets(forRoomWithID: roomID, getFilesAPI: getFilesAPI, roomFolderURL: roomFolderURL!) {
+            print("All assets downloaded and ready to use.")
+            let ARtrackingVC = ARTrackingViewController(imagesToTrack: Set(self.referenceImages), downloaded3DModels: self.downloded3DModels)
+           self.navigationController?.pushViewController(ARtrackingVC, animated: true)
+        }
+//        guard let referenceImages = ARReferenceImage.referenceImages(inGroupNamed: "DetectionImages", bundle: nil) else {
+//            print("No reference images found")
+//            return
+//        }
+//       
+//
+//        let ARtrackingVC = ARTrackingViewController(imagesToTrack: referenceImages, downloaded3DModels: <#[SCNNode]#>)
+//        self.navigationController?.pushViewController(ARtrackingVC, animated: true)
+//        // Proceed with your action using the tenant ID
+//        print("Tenant Room ID entered: \(tenantId)")
+    }
+    
+    func createFolderInDocumentsDirectory(folderName: String) -> URL? {
+        let fileManager = FileManager.default
+        if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let folderURL = documentsDirectory.appendingPathComponent(folderName)
+            
+            // Check if the main folder already exists, if not, create it
+            if !fileManager.fileExists(atPath: folderURL.path) {
+                do {
+                    try fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: nil)
+                    print("Main folder created at: \(folderURL.path)")
+                } catch {
+                    print("Failed to create folder: \(error)")
+                    return nil
+                }
+            }
+            
+            // Create subfolder for images inside the main folder
+            let imagesFolderURL = folderURL.appendingPathComponent("Images")
+            if !fileManager.fileExists(atPath: imagesFolderURL.path) {
+                do {
+                    try fileManager.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
+                    print("Images subfolder created at: \(imagesFolderURL.path)")
+                } catch {
+                    print("Failed to create Images subfolder: \(error)")
+                    return nil
+                }
+            }
+            
+            // Create subfolder for 3D models inside the main folder
+            let modelsFolderURL = folderURL.appendingPathComponent("3DModels")
+            if !fileManager.fileExists(atPath: modelsFolderURL.path) {
+                do {
+                    try fileManager.createDirectory(at: modelsFolderURL, withIntermediateDirectories: true, attributes: nil)
+                    print("3DModels subfolder created at: \(modelsFolderURL.path)")
+                } catch {
+                    print("Failed to create 3DModels subfolder: \(error)")
+                    return nil
+                }
+            }
+            
+            // Return the main folder URL
+            return folderURL
+        }
+        return nil
+    }
+    
+    func downloadAssets(forRoomWithID roomID: String, getFilesAPI: String, roomFolderURL: URL, completion: @escaping () -> Void) {
+        
+        // Start the activity indicator (if you have one)
+        // self.activityIndicator.startAnimating()
+        
+        fetchModelData(from: getFilesAPI) { markerURLs, modelURLs in
+            print("Marker URLs: \(markerURLs)")
+            print("Model URLs: \(modelURLs)")
+
+            // Create a DispatchGroup to track both downloads (markers and models)
+            let downloadGroup = DispatchGroup()
+
+            // Download the 3D models
+            downloadGroup.enter()
+            self.downloadMultipleUSDZModels(from: modelURLs, to: roomFolderURL.appendingPathComponent("3DModels")) { loadedNodes in
+                print("3D Models loaded:")
+                for node in loadedNodes {
+                    print("Loaded model node: \(node)")
+                }
+                downloadGroup.leave() // Models download complete
+            }
+
+            // Download the marker images
+            downloadGroup.enter()
+            self.downloadMultipleMarkerImages(from: markerURLs, to: roomFolderURL.appendingPathComponent("Markers")) { referenceImages in
+                print("Marker Images loaded:")
+                for image in referenceImages {
+                    print("Loaded marker image: \(image.name ?? "Unknown")")
+                    // Use these images in your AR session
+                }
+                downloadGroup.leave() // Marker images download complete
+            }
+
+            // Notify when both downloads (models and markers) are completed
+            downloadGroup.notify(queue: .main) {
+                print("All assets downloaded (models and markers).")
+                
+                // Stop the activity indicator
+                // self.activityIndicator.stopAnimating()
+
+                // Call the completion handler to notify the calling code
+                completion()
+            }
+        }
+    }
+    
+    func fetchModelData(from apiURL: String, completion: @escaping ([String], [String]) -> Void) {
+        guard let url = URL(string: apiURL) else {
+            print("Invalid API URL")
+            completion([], [])
             return
         }
-       
-        let ARtrackingVC = ARTrackingViewController(imagesToTrack: referenceImages)
-        self.navigationController?.pushViewController(ARtrackingVC, animated: true)
-        // Proceed with your action using the tenant ID
-        print("Tenant Room ID entered: \(tenantId)")
+
+        // Create a URLSession data task to fetch the JSON response
+        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                print("Error fetching data: \(error)")
+                completion([], [])
+                return
+            }
+
+            // Ensure there is data in the response
+            guard let data = data else {
+                print("No data returned from API")
+                completion([], [])
+                return
+            }
+
+            do {
+                // Parse the JSON response
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   let markers = json["markers"] as? [String], // Extract marker names
+                   let models = json["models"] as? [String] {  // Extract model names
+
+                    // Base URL to append file names
+                    let baseURL = "https://0a22-49-204-112-102.ngrok-free.app/files/"
+
+                    // Filter only .jpg files for markers and .zip for models
+                    let filteredMarkerURLs = markers.filter { $0.hasSuffix(".jpg") || $0.hasSuffix(".png") }
+                        .map { baseURL + $0 }
+                    
+                    let filteredModelURLs = models.filter { $0.hasSuffix(".zip") || $0.hasSuffix(".usdz") }
+                        .map {$0 }
+
+                    // Return the filtered arrays through the completion handler
+                    completion(filteredMarkerURLs, filteredModelURLs)
+                } else {
+                    print("Invalid JSON structure")
+                    completion([], [])
+                }
+            } catch {
+                print("Error parsing JSON: \(error)")
+                completion([], [])
+            }
+        }
+
+        // Start the URL session task
+        task.resume()
+    }
+    
+    func downloadMultipleUSDZModels(from urls: [String], to destinationFolder: URL, completion: @escaping ([SCNNode]) -> Void) {
+        let fileManager = FileManager.default
+
+        // Ensure the destination folder exists
+        if !fileManager.fileExists(atPath: destinationFolder.path) {
+            do {
+                try fileManager.createDirectory(at: destinationFolder, withIntermediateDirectories: true, attributes: nil)
+                print("Destination folder created at: \(destinationFolder.path)")
+            } catch {
+                print("Failed to create destination folder: \(error)")
+                completion([])
+                return
+            }
+        }
+
+        // Create a DispatchGroup to track all download tasks
+        let downloadGroup = DispatchGroup()
+
+        // Array to hold the SCNNode objects for the 3D models
+        var downloadedNodes: [SCNNode] = []
+
+        // Iterate through the URLs and start downloading each file
+        for fileName in urls {
+            let urlString = downloadModelsAPI + fileName
+            guard let url = URL(string: urlString) else {
+                print("Invalid URL: \(urlString)")
+                continue
+            }
+
+            let destinationURL = destinationFolder.appendingPathComponent(fileName)
+
+            // Check if the file already exists
+            if fileManager.fileExists(atPath: destinationURL.path) {
+                print("File already exists at: \(destinationURL.path)")
+                
+                // Load the existing 3D model from the file
+                if let node = load3DModel(from: destinationURL) {
+                    node.name = (fileName as NSString?)?.deletingPathExtension
+                    downloadedNodes.append(node)
+                }
+                continue
+            }
+
+            // Enter the DispatchGroup before starting the download task
+            downloadGroup.enter()
+
+            // Create and start the download task
+            let task = URLSession.shared.downloadTask(with: url) { (tempURL, response, error) in
+                if let error = error {
+                    print("Download error: \(error)")
+                    downloadGroup.leave() // Leave the group on error
+                    return
+                }
+
+                guard let tempURL = tempURL else {
+                    print("No file URL for: \(urlString)")
+                    downloadGroup.leave() // Leave the group if there's no file
+                    return
+                }
+
+                // Move the file from the temp location to the destination folder
+                do {
+                    try fileManager.moveItem(at: tempURL, to: destinationURL)
+                    print("File downloaded to: \(destinationURL.path)")
+
+                    // Load the 3D model from the downloaded file and add to the nodes array
+                    if let node = self.load3DModel(from: destinationURL) {
+                        node.name = (fileName as NSString?)?.deletingPathExtension
+                        downloadedNodes.append(node)
+                    }
+                } catch {
+                    print("File move error: \(error)")
+                }
+
+                // Leave the DispatchGroup when the download task is complete
+                downloadGroup.leave()
+            }
+
+            task.resume() // Start the download task
+        }
+
+        // Notify when all download tasks have completed
+        downloadGroup.notify(queue: .main) {
+            print("All downloads completed")
+            self.downloded3DModels = downloadedNodes
+            completion(downloadedNodes) // Return all the loaded SCNNodes
+        }
+    }
+    
+    func load3DModel(from fileURL: URL) -> SCNNode? {
+        do {
+            let scene = try SCNScene(url: fileURL, options: nil)
+            if let modelNode = scene.rootNode.childNodes.first {
+                return modelNode // Return the first node (your 3D model)
+            }
+        } catch {
+            print("Error loading 3D model: \(error)")
+        }
+        return nil
+    }
+    
+    func getFilesForCurrentRoomID(folderName: String) -> URL? {
+        let fileManager = FileManager.default
+        if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+            let folderURL = documentsDirectory.appendingPathComponent(folderName)
+            
+            // Check if the main folder already exists, if not, create it
+            if !fileManager.fileExists(atPath: folderURL.path) {
+                do {
+                    try fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: nil)
+                    print("Main folder created at: \(folderURL.path)")
+                } catch {
+                    print("Failed to create folder: \(error)")
+                    return nil
+                }
+            }
+            
+            // Create subfolder for images inside the main folder
+            let imagesFolderURL = folderURL.appendingPathComponent("Images")
+            if !fileManager.fileExists(atPath: imagesFolderURL.path) {
+                do {
+                    try fileManager.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
+                    print("Images subfolder created at: \(imagesFolderURL.path)")
+                } catch {
+                    print("Failed to create Images subfolder: \(error)")
+                    return nil
+                }
+            }
+            
+            // Create subfolder for 3D models inside the main folder
+            let modelsFolderURL = folderURL.appendingPathComponent("3DModels")
+            if !fileManager.fileExists(atPath: modelsFolderURL.path) {
+                do {
+                    try fileManager.createDirectory(at: modelsFolderURL, withIntermediateDirectories: true, attributes: nil)
+                    print("3DModels subfolder created at: \(modelsFolderURL.path)")
+                } catch {
+                    print("Failed to create 3DModels subfolder: \(error)")
+                    return nil
+                }
+            }
+            
+            // Return the main folder URL
+            return folderURL
+        }
+        return nil
+    }
+    
+    func downloadMultipleMarkerImages(from urls: [String], to destinationFolder: URL, completion: @escaping ([ARReferenceImage]) -> Void) {
+        
+        let fileManager = FileManager.default
+
+        // Ensure the destination folder exists
+        if !fileManager.fileExists(atPath: destinationFolder.path) {
+            do {
+                try fileManager.createDirectory(at: destinationFolder, withIntermediateDirectories: true, attributes: nil)
+                print("Destination folder created at: \(destinationFolder.path)")
+            } catch {
+                print("Failed to create destination folder: \(error)")
+                completion([])
+                return
+            }
+        }
+
+        // Create a DispatchGroup to track all download tasks
+        let downloadGroup = DispatchGroup()
+
+        // Array to hold the ARReferenceImage objects
+        var downloadedReferenceImages: [ARReferenceImage] = []
+
+        // Iterate through the URLs and start downloading each file
+        for urlString in urls {
+            let getMarkerAPI = "https://0a22-49-204-112-102.ngrok-free.app/files/\(urlString)" // Update your API endpoint
+            
+            guard let url = URL(string: urlString) else {
+                print("Invalid URL: \(urlString)")
+                continue
+            }
+
+            let fileName = url.lastPathComponent // Use the file name from the URL
+            let destinationURL = destinationFolder.appendingPathComponent(fileName)
+
+            // Check if the file already exists
+            if fileManager.fileExists(atPath: destinationURL.path) {
+                print("File already exists at: \(destinationURL.path)")
+                
+                // Load the existing image and add it to the reference images array
+                if let referenceImage = loadReferenceImage(from: destinationURL) {
+                    downloadedReferenceImages.append(referenceImage)
+                }
+                continue
+            }
+
+            // Enter the DispatchGroup before starting the download task
+            downloadGroup.enter()
+
+            // Create and start the download task
+            let task = URLSession.shared.downloadTask(with: url) { (tempURL, response, error) in
+                if let error = error {
+                    print("Download error: \(error)")
+                    downloadGroup.leave() // Leave the group on error
+                    return
+                }
+
+                guard let tempURL = tempURL else {
+                    print("No file URL for: \(urlString)")
+                    downloadGroup.leave() // Leave the group if there's no file
+                    return
+                }
+
+                // Move the file from the temp location to the destination folder
+                do {
+                    try fileManager.moveItem(at: tempURL, to: destinationURL)
+                    print("File downloaded to: \(destinationURL.path)")
+
+                    // Load the image and convert to ARReferenceImage
+                    if let referenceImage = self.loadReferenceImage(from: destinationURL) {
+                        downloadedReferenceImages.append(referenceImage)
+                    }
+                } catch {
+                    print("File move error: \(error)")
+                }
+
+                // Leave the DispatchGroup when the download task is complete
+                downloadGroup.leave()
+            }
+
+            task.resume() // Start the download task
+        }
+
+        // Notify when all download tasks have completed
+        downloadGroup.notify(queue: .main) {
+            print("All marker downloads completed")
+            self.referenceImages = downloadedReferenceImages
+            completion(downloadedReferenceImages) // Return all the loaded ARReferenceImages
+        }
     }
     
     // Helper function to show an alert
@@ -94,6 +493,18 @@ class HomeScreenViewController: UIViewController {
         }
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
+    }
+    
+    func loadReferenceImage(from fileURL: URL) -> ARReferenceImage? {
+        // Load the image from the URL
+        if let image = UIImage(contentsOfFile: fileURL.path),
+           let cgImage = image.cgImage {
+            // Create ARReferenceImage from the CGImage
+            let referenceImage = ARReferenceImage(cgImage, orientation: .up, physicalWidth: 0.2) // Set appropriate physical width
+            referenceImage.name = fileURL.lastPathComponent
+            return referenceImage
+        }
+        return nil
     }
     
     func verifyRoomId() {

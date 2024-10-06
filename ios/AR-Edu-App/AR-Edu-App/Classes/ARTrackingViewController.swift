@@ -1,16 +1,10 @@
-//
-//  ARTrackingViewController.swift
-//  AR-Edu-App
-//
-//  Created by Priyadharshan Raja on 25/09/24.
-//
-
 import Foundation
 import ARKit
 
-class ARTrackingViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate{
+class ARTrackingViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
-    var imagesToTrack : Set<ARReferenceImage>
+    var imagesToTrack: Set<ARReferenceImage>
+    var downloaded3DModels: [SCNNode]
     
     private lazy var arSceneView: ARSCNView = {
         let arSceneView = ARSCNView()
@@ -46,8 +40,9 @@ class ARTrackingViewController: UIViewController, ARSCNViewDelegate, ARSessionDe
         return messageLabel
     }()
     
-    init(imagesToTrack: Set<ARReferenceImage>) {
+    init(imagesToTrack: Set<ARReferenceImage>, downloaded3DModels: [SCNNode] ) {
         self.imagesToTrack = imagesToTrack
+        self.downloaded3DModels = downloaded3DModels
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -62,7 +57,6 @@ class ARTrackingViewController: UIViewController, ARSCNViewDelegate, ARSessionDe
     }
     
     private func configureView() {
-        
         arSceneView.session.delegate = self
         arSceneView.delegate = self
         
@@ -74,10 +68,10 @@ class ARTrackingViewController: UIViewController, ARSCNViewDelegate, ARSessionDe
         arSceneView.addLayoutGuide(focusGuide)
         
         NSLayoutConstraint.activate([
-            self.arSceneView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            self.arSceneView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.arSceneView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            self.arSceneView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            arSceneView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            arSceneView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            arSceneView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            arSceneView.topAnchor.constraint(equalTo: self.view.topAnchor),
             
             focusGuide.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
             focusGuide.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
@@ -93,32 +87,47 @@ class ARTrackingViewController: UIViewController, ARSCNViewDelegate, ARSessionDe
             messageLabel.trailingAnchor.constraint(equalTo: focusGuide.trailingAnchor),
             messageLabel.bottomAnchor.constraint(equalTo: focusGuide.bottomAnchor),
             messageLabel.topAnchor.constraint(equalTo: focusImageView.bottomAnchor, constant: 25),
-            
         ])
     }
     
-    private func configureImageTrackingSession(){
+    private func configureImageTrackingSession() {
         let config = ARWorldTrackingConfiguration()
+        
+        // Ensure imagesToTrack is non-empty
+        guard !imagesToTrack.isEmpty else {
+            print("No reference images to track.")
+            return
+        }
+        
         config.detectionImages = self.imagesToTrack
-        self.arSceneView.session.run(config, options: .resetTracking)
+        self.arSceneView.session.run(config, options: [.resetTracking, .removeExistingAnchors])
+    }
+    
+    private func createScene(with node: SCNNode) -> SCNScene {
+        let scene = SCNScene()
+        scene.rootNode.addChildNode(node)
+        return scene
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         if let imageAnchor = anchor as? ARImageAnchor {
-            print(anchor.name ?? "No Name")
-            if anchor.name == "Tune-3D-Marker" {
-                
-                // Load the scene from the .obj file
-                guard let scene = SCNScene(named: "baked_mesh.obj") else {
-                    print("Failed to load model")
-                    return
+            if let markerName = (imageAnchor.name as NSString?)?.deletingPathExtension {
+                for model in downloaded3DModels {
+                    if model.name == markerName {
+                        // Create a scene with the model node
+                        let scene = createScene(with: model)
+                        
+                        // Dispatch scene modification on the main thread to avoid conflicts
+                        DispatchQueue.main.async {
+                            // Ensure this modification happens outside the rendering callback
+                            let ARModelPreviewVC = ARModelPreviewViewController(scene: scene)
+                            self.navigationController?.pushViewController(ARModelPreviewVC, animated: true)
+                        }
+                        break
+                    }
                 }
-                
-                // Ensure pushing the new view controller happens on the main thread
-                DispatchQueue.main.async {
-                    let ARModelPreviewVC = ARModelPreviewViewController(scene: scene)
-                    self.navigationController?.pushViewController(ARModelPreviewVC, animated: true)
-                }
+            } else {
+                print("Image anchor has no name or couldn't delete path extension")
             }
         }
     }

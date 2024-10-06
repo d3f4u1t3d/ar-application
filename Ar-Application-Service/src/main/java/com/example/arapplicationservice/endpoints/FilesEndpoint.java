@@ -1,5 +1,6 @@
 package com.example.arapplicationservice.endpoints;
 
+import com.example.arapplicationservice.dto.response.IOSResponse;
 import com.example.arapplicationservice.dto.response.JsonResponse;
 import com.example.arapplicationservice.service.FilesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,9 @@ public class FilesEndpoint {
     @GetMapping("/get/{roomId}")
     public JsonResponse getFileNames(@PathVariable String roomId){
         return filesService.getFileNames(roomId);
+    }
+    @GetMapping("/ios/{roomId}")
+    public IOSResponse getFileNamesIOS(@PathVariable String roomId){
+        return filesService.getFileNamesIOS(roomId);
     }
 }

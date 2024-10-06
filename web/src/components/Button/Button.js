@@ -1,9 +1,9 @@
-import React from 'react'
-import './button.scss'
+import React from "react";
+import "./button.scss";
 
-const Button = ({buttonText , onClickHandler , purpose}) => {
-  let classType = ""
-  switch(purpose){
+const Button = ({ buttonText, onClickHandler, purpose }) => {
+  let classType = "";
+  switch (purpose) {
     case "copy":
       classType = "copy-button";
       break;
@@ -18,13 +18,16 @@ const Button = ({buttonText , onClickHandler , purpose}) => {
       break;
     default:
       classType = "default-button";
-
   }
   return (
-    <button className={`btn ${classType}`} type='button' onClick={onClickHandler}>
-        {buttonText}
+    <button
+      className={`btn ${classType}`}
+      type="button"
+      onClick={onClickHandler}
+    >
+      {buttonText}
     </button>
-  )
-}
+  );
+};
 
-export default Button
+export default Button;

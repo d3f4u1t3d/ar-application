@@ -13,9 +13,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        deleteDocumentsFolder()
         return true
     }
 
+    func deleteDocumentsFolder() {
+        let fileManager = FileManager.default
+        if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+            do {
+                let contents = try fileManager.contentsOfDirectory(atPath: documentsDirectory.path)
+                for file in contents {
+                    let filePath = documentsDirectory.appendingPathComponent(file).path
+                    try fileManager.removeItem(atPath: filePath)
+                }
+                print("Documents folder cleared.")
+            } catch {
+                print("Failed to clear documents folder: \(error)")
+            }
+        }
+    }
     // MARK: UISceneSession Lifecycle
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
@@ -30,6 +46,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
+    func applicationWillTerminate(_ application: UIApplication) {
+            // Call the function to clear the Documents directory
+            clearDocumentsDirectory()
+        }
 
-}
+        // Function to clear the Documents directory
+    func clearDocumentsDirectory() {
+            let fileManager = FileManager.default
+            if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+                do {
+                    let filePaths = try fileManager.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil)
+                    for filePath in filePaths {
+                        try fileManager.removeItem(at: filePath)
+                        print("Removed file at: \(filePath)")
+                    }
+                    print("Documents directory cleared.")
+                } catch {
+                    print("Could not clear documents directory: \(error)")
+                }
+            }
+        }
+    }
 
