@@ -53,7 +53,6 @@ class ARTrackingViewController: UIViewController, ARSCNViewDelegate, ARSessionDe
     override func viewDidLoad() {
         super.viewDidLoad()
         self.configureView()
-        self.configureImageTrackingSession()
     }
     
     private func configureView() {
@@ -90,6 +89,16 @@ class ARTrackingViewController: UIViewController, ARSCNViewDelegate, ARSessionDe
         ])
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.configureImageTrackingSession()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.arSceneView.session.pause()
+    }
+    
     private func configureImageTrackingSession() {
         let config = ARWorldTrackingConfiguration()
         
@@ -117,9 +126,7 @@ class ARTrackingViewController: UIViewController, ARSCNViewDelegate, ARSessionDe
                         // Create a scene with the model node
                         let scene = createScene(with: model)
                         
-                        // Dispatch scene modification on the main thread to avoid conflicts
                         DispatchQueue.main.async {
-                            // Ensure this modification happens outside the rendering callback
                             let ARModelPreviewVC = ARModelPreviewViewController(scene: scene)
                             self.navigationController?.pushViewController(ARModelPreviewVC, animated: true)
                         }

@@ -15,14 +15,7 @@
 		E91C8DB92CA4845300E217C8 /* ARTrackingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91C8DB82CA4845300E217C8 /* ARTrackingViewController.swift */; };
 		E91C8DCE2CA676C300E217C8 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91C8DCD2CA676C300E217C8 /* NetworkManager.swift */; };
 		E91C8EA82CA7152900E217C8 /* 3dModelPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91C8EA72CA7152900E217C8 /* 3dModelPreviewViewController.swift */; };
-		E91C8EAB2CA71A0600E217C8 /* iOSLatestGoodScan-40-Imgs.usdz in Resources */ = {isa = PBXBuildFile; fileRef = E91C8EAA2CA7170500E217C8 /* iOSLatestGoodScan-40-Imgs.usdz */; };
-		E91C8EB12CA81D4000E217C8 /* baked_mesh.obj in Resources */ = {isa = PBXBuildFile; fileRef = E91C8EB02CA81D4000E217C8 /* baked_mesh.obj */; };
-		E91C8EBC2CA81F3100E217C8 /* baked_mesh_norm0.png in Resources */ = {isa = PBXBuildFile; fileRef = E91C8EB52CA81F3100E217C8 /* baked_mesh_norm0.png */; };
-		E91C8EBD2CA81F3100E217C8 /* baked_mesh.mtl in Resources */ = {isa = PBXBuildFile; fileRef = E91C8EB62CA81F3100E217C8 /* baked_mesh.mtl */; };
-		E91C8EBE2CA81F3100E217C8 /* baked_mesh_ao0.png in Resources */ = {isa = PBXBuildFile; fileRef = E91C8EB72CA81F3100E217C8 /* baked_mesh_ao0.png */; };
-		E91C8EBF2CA81F3100E217C8 /* baked_mesh_tex0.png in Resources */ = {isa = PBXBuildFile; fileRef = E91C8EB82CA81F3100E217C8 /* baked_mesh_tex0.png */; };
-		E91C8EC02CA81F3100E217C8 /* baked_mesh.obj in Resources */ = {isa = PBXBuildFile; fileRef = E91C8EB92CA81F3100E217C8 /* baked_mesh.obj */; };
-		E91C8EC12CA81F3100E217C8 /* baked_mesh.usda in Resources */ = {isa = PBXBuildFile; fileRef = E91C8EBA2CA81F3100E217C8 /* baked_mesh.usda */; };
+		E9D87F8B2CB1B0DA00D28050 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D87F8A2CB1B0DA00D28050 /* Helper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,18 +25,11 @@
 		E91C8DA42CA46F3500E217C8 /* HomeScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenViewController.swift; sourceTree = "<group>"; };
 		E91C8DA92CA46F3600E217C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E91C8DAC2CA46F3600E217C8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		E91C8DAE2CA46F3600E217C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E91C8DB82CA4845300E217C8 /* ARTrackingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARTrackingViewController.swift; sourceTree = "<group>"; };
 		E91C8DCD2CA676C300E217C8 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		E91C8EA72CA7152900E217C8 /* 3dModelPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 3dModelPreviewViewController.swift; sourceTree = "<group>"; };
-		E91C8EAA2CA7170500E217C8 /* iOSLatestGoodScan-40-Imgs.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = "iOSLatestGoodScan-40-Imgs.usdz"; sourceTree = "<group>"; };
-		E91C8EB02CA81D4000E217C8 /* baked_mesh.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = baked_mesh.obj; path = "../../../../../../POC's/3D model construction/model-outputs/Medium-ObjOutput/baked_mesh.obj"; sourceTree = "<group>"; };
-		E91C8EB52CA81F3100E217C8 /* baked_mesh_norm0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = baked_mesh_norm0.png; sourceTree = "<group>"; };
-		E91C8EB62CA81F3100E217C8 /* baked_mesh.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = baked_mesh.mtl; sourceTree = "<group>"; };
-		E91C8EB72CA81F3100E217C8 /* baked_mesh_ao0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = baked_mesh_ao0.png; sourceTree = "<group>"; };
-		E91C8EB82CA81F3100E217C8 /* baked_mesh_tex0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = baked_mesh_tex0.png; sourceTree = "<group>"; };
-		E91C8EB92CA81F3100E217C8 /* baked_mesh.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = baked_mesh.obj; sourceTree = "<group>"; };
-		E91C8EBA2CA81F3100E217C8 /* baked_mesh.usda */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = baked_mesh.usda; sourceTree = "<group>"; };
+		E9D87F8A2CB1B0DA00D28050 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		E9D87F8C2CB1B20900D28050 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,16 +62,12 @@
 		E91C8D9F2CA46F3500E217C8 /* AR-Edu-App */ = {
 			isa = PBXGroup;
 			children = (
-				E91C8EB42CA81F3100E217C8 /* Medium-ObjOutput */,
+				E9D87F8C2CB1B20900D28050 /* Info.plist */,
+				E91C8DAB2CA46F3600E217C8 /* LaunchScreen.storyboard */,
+				E91C8DA92CA46F3600E217C8 /* Assets.xcassets */,
 				E91C8DA02CA46F3500E217C8 /* AppDelegate.swift */,
 				E91C8DA22CA46F3500E217C8 /* SceneDelegate.swift */,
 				E91C8DB72CA4843100E217C8 /* Classes */,
-				E91C8DA92CA46F3600E217C8 /* Assets.xcassets */,
-				E91C8EAA2CA7170500E217C8 /* iOSLatestGoodScan-40-Imgs.usdz */,
-				E91C8EB02CA81D4000E217C8 /* baked_mesh.obj */,
-				E91C8EA92CA716E800E217C8 /* art.scnassets */,
-				E91C8DAB2CA46F3600E217C8 /* LaunchScreen.storyboard */,
-				E91C8DAE2CA46F3600E217C8 /* Info.plist */,
 			);
 			path = "AR-Edu-App";
 			sourceTree = "<group>";
@@ -97,29 +79,9 @@
 				E91C8DB82CA4845300E217C8 /* ARTrackingViewController.swift */,
 				E91C8DCD2CA676C300E217C8 /* NetworkManager.swift */,
 				E91C8EA72CA7152900E217C8 /* 3dModelPreviewViewController.swift */,
+				E9D87F8A2CB1B0DA00D28050 /* Helper.swift */,
 			);
 			path = Classes;
-			sourceTree = "<group>";
-		};
-		E91C8EA92CA716E800E217C8 /* art.scnassets */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = art.scnassets;
-			sourceTree = "<group>";
-		};
-		E91C8EB42CA81F3100E217C8 /* Medium-ObjOutput */ = {
-			isa = PBXGroup;
-			children = (
-				E91C8EB52CA81F3100E217C8 /* baked_mesh_norm0.png */,
-				E91C8EB62CA81F3100E217C8 /* baked_mesh.mtl */,
-				E91C8EB72CA81F3100E217C8 /* baked_mesh_ao0.png */,
-				E91C8EB82CA81F3100E217C8 /* baked_mesh_tex0.png */,
-				E91C8EB92CA81F3100E217C8 /* baked_mesh.obj */,
-				E91C8EBA2CA81F3100E217C8 /* baked_mesh.usda */,
-			);
-			name = "Medium-ObjOutput";
-			path = "../../../../../../POC's/3D model construction/model-outputs/Medium-ObjOutput";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -180,16 +142,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E91C8EC12CA81F3100E217C8 /* baked_mesh.usda in Resources */,
-				E91C8EBF2CA81F3100E217C8 /* baked_mesh_tex0.png in Resources */,
-				E91C8EBC2CA81F3100E217C8 /* baked_mesh_norm0.png in Resources */,
-				E91C8EAB2CA71A0600E217C8 /* iOSLatestGoodScan-40-Imgs.usdz in Resources */,
 				E91C8DAD2CA46F3600E217C8 /* LaunchScreen.storyboard in Resources */,
-				E91C8EB12CA81D4000E217C8 /* baked_mesh.obj in Resources */,
-				E91C8EBD2CA81F3100E217C8 /* baked_mesh.mtl in Resources */,
 				E91C8DAA2CA46F3600E217C8 /* Assets.xcassets in Resources */,
-				E91C8EC02CA81F3100E217C8 /* baked_mesh.obj in Resources */,
-				E91C8EBE2CA81F3100E217C8 /* baked_mesh_ao0.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,6 +155,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E91C8DA52CA46F3500E217C8 /* HomeScreenViewController.swift in Sources */,
+				E9D87F8B2CB1B0DA00D28050 /* Helper.swift in Sources */,
 				E91C8DA12CA46F3500E217C8 /* AppDelegate.swift in Sources */,
 				E91C8DCE2CA676C300E217C8 /* NetworkManager.swift in Sources */,
 				E91C8DB92CA4845300E217C8 /* ARTrackingViewController.swift in Sources */,

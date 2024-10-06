@@ -14,37 +14,83 @@ class HomeScreenViewController: UIViewController {
     let appTitleLabel = UILabel()
     let tenantRoomIdTextField = UITextField()
     let submitButton = UIButton(type: .system)
+    var appTitleContainerView = UIView()
+    var appSubTitle = UILabel()
     
     private var referenceImages : [ARReferenceImage] = []
     private var downloded3DModels : [SCNNode] = []
     
-    private var downloadModelsAPI = "https://0a22-49-204-112-102.ngrok-free.app/files/"
-    private var getFilesAPI = "https://0a22-49-204-112-102.ngrok-free.app/ios/45"
+    private var downloadModelsAPI = "https://mole-natural-ghoul.ngrok-free.app/files/"
+    private var getFilesAPI = "https://mole-natural-ghoul.ngrok-free.app/ios/45"
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setBackgroundImage()
+        addObservers()
         // Set up the view background color
         view.backgroundColor = UIColor.systemTeal
 
         // Configure App Title Label
-        appTitleLabel.text = "Pullaiyar Suli-Edu-App"
-        appTitleLabel.font = UIFont.boldSystemFont(ofSize: 34)
-        appTitleLabel.textAlignment = .center
+        appTitleLabel.text = "LearnSphere"
+        appTitleLabel.font = UIFont.boldSystemFont(ofSize: 50)
+        appTitleLabel.backgroundColor = .black
+        appTitleLabel.textAlignment = .left
+        appTitleLabel.layer.cornerRadius = 10
+        appTitleLabel.layer.masksToBounds = true
         appTitleLabel.textColor = UIColor.label
         appTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        appTitleContainerView.addSubview(appTitleLabel)
+
+        appSubTitle.text = "The quick brown fox jumps over the lazy dog"
+        appSubTitle.numberOfLines = 3
+        appSubTitle.font = UIFont.boldSystemFont(ofSize: 20)
+        appSubTitle.backgroundColor = .clear
+        appSubTitle.translatesAutoresizingMaskIntoConstraints = false
+        appTitleContainerView.addSubview(appSubTitle)
+        
+        appTitleContainerView.backgroundColor = .clear
+        view.addSubview(appTitleContainerView)
+        appTitleContainerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            appTitleContainerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            appTitleContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -70),
+            appTitleContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor,constant: 20),
+            appTitleContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            appTitleContainerView.heightAnchor.constraint(equalToConstant: 180)
+        ])
+        
+        appTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            appTitleLabel.topAnchor.constraint(equalTo: appTitleContainerView.topAnchor),
+            appTitleLabel.leadingAnchor.constraint(equalTo: appTitleContainerView.leadingAnchor),
+            appTitleLabel.trailingAnchor.constraint(equalTo: appTitleContainerView.trailingAnchor, constant: -30),
+            appTitleLabel.heightAnchor.constraint(equalToConstant: 70)
+        ])
+        
+        NSLayoutConstraint.activate([
+            appSubTitle.topAnchor.constraint(equalTo: appTitleLabel.bottomAnchor, constant: -15),
+            appSubTitle.leadingAnchor.constraint(equalTo: appTitleContainerView.leadingAnchor),
+            appSubTitle.trailingAnchor.constraint(equalTo: appTitleContainerView.trailingAnchor, constant: -140),
+            appSubTitle.bottomAnchor.constraint(equalTo: appTitleContainerView.bottomAnchor)
+        ])
         
         // Configure Tenant Room ID TextField
-        tenantRoomIdTextField.placeholder = "Enter Room ID"
+        tenantRoomIdTextField.placeholder = "Room ID here"
         tenantRoomIdTextField.borderStyle = .roundedRect
+        tenantRoomIdTextField.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        tenantRoomIdTextField.borderRect(forBounds: .zero)
+        tenantRoomIdTextField.layer.cornerRadius = 10
+        tenantRoomIdTextField.layer.borderColor = UIColor.white.cgColor  // Set white border color
+        tenantRoomIdTextField.layer.borderWidth = 1.0
         tenantRoomIdTextField.font = UIFont.systemFont(ofSize: 18)
         tenantRoomIdTextField.keyboardType = .numberPad
         tenantRoomIdTextField.translatesAutoresizingMaskIntoConstraints = false
+        addDoneButtonOnKeyboard()
         
         // Configure Submit Button
-        submitButton.setTitle("Submit", for: .normal)
-        submitButton.backgroundColor = UIColor.systemIndigo
+        submitButton.setTitle("Enter", for: .normal)
+        submitButton.backgroundColor = UIColor(red: 245/255, green: 189/255, blue: 69/255, alpha: 1.0)
         submitButton.setTitleColor(UIColor.white, for: .normal)
         submitButton.layer.cornerRadius = 10
         submitButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
@@ -52,7 +98,7 @@ class HomeScreenViewController: UIViewController {
         submitButton.translatesAutoresizingMaskIntoConstraints = false
         
         // Set up layout using a vertical stack view
-        let stackView = UIStackView(arrangedSubviews: [appTitleLabel, tenantRoomIdTextField, submitButton])
+        let stackView = UIStackView(arrangedSubviews: [appTitleContainerView, tenantRoomIdTextField, submitButton])
         stackView.axis = .vertical
         stackView.spacing = 20
         stackView.alignment = .fill
@@ -64,15 +110,45 @@ class HomeScreenViewController: UIViewController {
             // Stack View constraints
             stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
             // TextField height constraint
-            tenantRoomIdTextField.heightAnchor.constraint(equalToConstant: 50),
+            tenantRoomIdTextField.heightAnchor.constraint(equalToConstant: 60),
             
             // Button height constraint
             submitButton.heightAnchor.constraint(equalToConstant: 50)
         ])
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        AppUtility.lockOrientation(.portrait)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        AppUtility.lockOrientation(.all)
+
+    }
+    
+    deinit{
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func addObservers(){
+        NotificationCenter.default.addObserver(self, selector : #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    func setBackgroundImage() {
+        let backgroundImageView = UIImageView(frame: self.view.bounds)
+        backgroundImageView.image = UIImage(named: "HomeWallpaper")
+        backgroundImageView.contentMode = .scaleAspectFill
+
+        self.view.addSubview(backgroundImageView)
+        self.view.sendSubviewToBack(backgroundImageView)
     }
     
     // Button Action
@@ -100,6 +176,39 @@ class HomeScreenViewController: UIViewController {
 //        self.navigationController?.pushViewController(ARtrackingVC, animated: true)
 //        // Proceed with your action using the tenant ID
 //        print("Tenant Room ID entered: \(tenantId)")
+    }
+    
+    func addDoneButtonOnKeyboard() {
+        // Create a toolbar
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+
+        // Create a flexible space item (to push the done button to the right)
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+
+        // Create the done button
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonAction))
+
+        // Add flexibleSpace and doneButton to the toolbar
+        toolbar.setItems([flexibleSpace, doneButton], animated: false)
+
+        // Set the toolbar as the accessory view for the text fields or text views
+        tenantRoomIdTextField.inputAccessoryView = toolbar
+        tenantRoomIdTextField.inputAccessoryView = toolbar
+    }
+
+    @objc func doneButtonAction() {
+        self.view.endEditing(true)
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            self.view.frame.origin.y = -100
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        self.view.frame.origin.y = 0
     }
     
     func createFolderInDocumentsDirectory(folderName: String) -> URL? {
@@ -496,13 +605,31 @@ class HomeScreenViewController: UIViewController {
     }
     
     func loadReferenceImage(from fileURL: URL) -> ARReferenceImage? {
-        // Load the image from the URL
+        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+            print("File does not exist at: \(fileURL.path)")
+            return nil
+        }
+
+        do {
+            let data = try Data(contentsOf: fileURL)  // Attempt to read the file data
+            if let image = UIImage(data: data) {
+                print("Successfully loaded image.")
+            } else {
+                print("The file is not a valid image.")
+            }
+        } catch {
+            // Handle the error if file reading fails
+            print("Failed to read file: \(error.localizedDescription)")
+        }
+        
         if let image = UIImage(contentsOfFile: fileURL.path),
            let cgImage = image.cgImage {
-            // Create ARReferenceImage from the CGImage
+
             let referenceImage = ARReferenceImage(cgImage, orientation: .up, physicalWidth: 0.2) // Set appropriate physical width
             referenceImage.name = fileURL.lastPathComponent
             return referenceImage
+        } else {
+            print("Failed to load image from URL: \(fileURL)")
         }
         return nil
     }
