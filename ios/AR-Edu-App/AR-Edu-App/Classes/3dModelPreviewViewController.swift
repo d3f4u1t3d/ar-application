@@ -5,7 +5,8 @@ class ARModelPreviewViewController: UIViewController {
 
         private var sceneView: SCNView!
         var scene: SCNScene
-
+        private var markerNodes: [SCNNode] = []
+    
         init(scene: SCNScene) {
             self.scene = scene
             super.init(nibName: nil, bundle: nil)
@@ -87,28 +88,73 @@ class ARModelPreviewViewController: UIViewController {
             }
         }
 
+    private func getAnnotationText() {
+        let alertController = UIAlertController(title: "Annotate", message: "Enter text and tap 'Annotate' to mark here or tap 'Cancel'", preferredStyle: .alert)
+
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Ex: This is cerebellum of brain...."
+        }
+        
+        let submitAction = UIAlertAction(title: "Annotate", style: .default) { [weak self] _ in
+            if let inputText = alertController.textFields?.first?.text {
+                print("User input: \(inputText)")
+                self?.handleAnnotationInput(inputText)
+            }
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) {[weak self] _ in
+            self?.removeLastMarker()
+        }
+        
+        alertController.addAction(submitAction)
+        alertController.addAction(cancelAction)
+        self.present(alertController, animated: true, completion: nil)
+    }
+
+    private func handleAnnotationInput(_ input: String) {
+        print("User input processed: \(input)")
+    }
+    
+    private func handleAnnotationCancel() {
+        
+    }
+        
         // Function to mark the position with a small sphere
-        func markPosition(at position: SCNVector3) {
+        private func markPosition(at position: SCNVector3) {
             let markerGeometry = SCNSphere(radius: 0.05)
             let markerMaterial = SCNMaterial()
-            markerMaterial.diffuse.contents = UIColor.red // Set marker color
+            markerMaterial.diffuse.contents = UIColor.red
             markerGeometry.materials = [markerMaterial]
             
             let markerNode = SCNNode(geometry: markerGeometry)
             markerNode.position = position
-            
-            scene.rootNode.addChildNode(markerNode) // Add marker to scene
+            markerNodes.append(markerNode)
+            scene.rootNode.addChildNode(markerNode)
         }
 
         // Function to add an annotation label to the scene
-        func addAnnotation(at position: SCNVector3, withText text: String) {
+        private func addAnnotation(at position: SCNVector3, withText text: String) {
             let textGeometry = SCNText(string: text, extrusionDepth: 1.0)
             textGeometry.firstMaterial?.diffuse.contents = UIColor.white
+            textGeometry.font = .systemFont(ofSize: 10)
 
             let textNode = SCNNode(geometry: textGeometry)
             textNode.scale = SCNVector3(0.1, 0.1, 0.1) // Scale down the text
             textNode.position = SCNVector3(position.x, position.y + 0.2, position.z) // Slightly above the marker
 
             scene.rootNode.addChildNode(textNode) // Add label to scene
+        }
+    
+        private func removeLastMarker() {
+            if let lastMarker = markerNodes.last {
+                lastMarker.removeFromParentNode()
+                markerNodes.removeLast()
+            }
+        }
+
+        private func removeAllMarkers() {
+            for marker in markerNodes {
+                marker.removeFromParentNode()
+            }
+            markerNodes.removeAll()
         }
     }

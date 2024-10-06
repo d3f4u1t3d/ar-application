@@ -20,14 +20,14 @@ class HomeScreenViewController: UIViewController {
     private var referenceImages : [ARReferenceImage] = []
     private var downloded3DModels : [SCNNode] = []
     
-    private var downloadModelsAPI = "https://0a22-49-204-112-102.ngrok-free.app/files/"
-    private var getFilesAPI = "https://0a22-49-204-112-102.ngrok-free.app/ios/45"
+    private var downloadModelsAPI = "https://mole-natural-ghoul.ngrok-free.app/files/"
+    private var getFilesAPI = "https://mole-natural-ghoul.ngrok-free.app/ios/45"
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setBackgroundImage()
-
+        addObservers()
         // Set up the view background color
         view.backgroundColor = UIColor.systemTeal
 
@@ -86,6 +86,7 @@ class HomeScreenViewController: UIViewController {
         tenantRoomIdTextField.font = UIFont.systemFont(ofSize: 18)
         tenantRoomIdTextField.keyboardType = .numberPad
         tenantRoomIdTextField.translatesAutoresizingMaskIntoConstraints = false
+        addDoneButtonOnKeyboard()
         
         // Configure Submit Button
         submitButton.setTitle("Enter", for: .normal)
@@ -130,6 +131,17 @@ class HomeScreenViewController: UIViewController {
         AppUtility.lockOrientation(.all)
 
     }
+    
+    deinit{
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func addObservers(){
+        NotificationCenter.default.addObserver(self, selector : #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
     func setBackgroundImage() {
         let backgroundImageView = UIImageView(frame: self.view.bounds)
         backgroundImageView.image = UIImage(named: "HomeWallpaper")
@@ -164,6 +176,39 @@ class HomeScreenViewController: UIViewController {
 //        self.navigationController?.pushViewController(ARtrackingVC, animated: true)
 //        // Proceed with your action using the tenant ID
 //        print("Tenant Room ID entered: \(tenantId)")
+    }
+    
+    func addDoneButtonOnKeyboard() {
+        // Create a toolbar
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+
+        // Create a flexible space item (to push the done button to the right)
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+
+        // Create the done button
+        let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonAction))
+
+        // Add flexibleSpace and doneButton to the toolbar
+        toolbar.setItems([flexibleSpace, doneButton], animated: false)
+
+        // Set the toolbar as the accessory view for the text fields or text views
+        tenantRoomIdTextField.inputAccessoryView = toolbar
+        tenantRoomIdTextField.inputAccessoryView = toolbar
+    }
+
+    @objc func doneButtonAction() {
+        self.view.endEditing(true)
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            self.view.frame.origin.y = -100
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        self.view.frame.origin.y = 0
     }
     
     func createFolderInDocumentsDirectory(folderName: String) -> URL? {
@@ -560,13 +605,31 @@ class HomeScreenViewController: UIViewController {
     }
     
     func loadReferenceImage(from fileURL: URL) -> ARReferenceImage? {
-        // Load the image from the URL
+        guard FileManager.default.fileExists(atPath: fileURL.path) else {
+            print("File does not exist at: \(fileURL.path)")
+            return nil
+        }
+
+        do {
+            let data = try Data(contentsOf: fileURL)  // Attempt to read the file data
+            if let image = UIImage(data: data) {
+                print("Successfully loaded image.")
+            } else {
+                print("The file is not a valid image.")
+            }
+        } catch {
+            // Handle the error if file reading fails
+            print("Failed to read file: \(error.localizedDescription)")
+        }
+        
         if let image = UIImage(contentsOfFile: fileURL.path),
            let cgImage = image.cgImage {
-            // Create ARReferenceImage from the CGImage
+
             let referenceImage = ARReferenceImage(cgImage, orientation: .up, physicalWidth: 0.2) // Set appropriate physical width
             referenceImage.name = fileURL.lastPathComponent
             return referenceImage
+        } else {
+            print("Failed to load image from URL: \(fileURL)")
         }
         return nil
     }
